@@ -1,0 +1,78 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-08-04 13:47:02
+ * @LastEditTime: 2020-08-04 15:23:24
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \eduxxxxf:\debounce\debounce.html
+-->
+<div id="content"
+    style="height:150px;line-height:150px;text-align:center; color: #fff;background-color:#ccc;font-size:80px;"></div>
+  <script>
+    let num = 1;
+    const content = document.getElementById('content');
+    function count() {
+      content.innerHTML = num++;
+    };
+    // 非立即执行版
+    function debounce (func,wait) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = [...arguments];
+            // console.log(arguments)
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                console.log(args)
+                func.apply(context,args)
+            },wait);
+        }
+    };
+
+    // 立即执行版
+    function debounceImmediate (func,wait) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = [...arguments];
+            console.log(timeout)
+            if (timeout) clearTimeout(timeout);
+            console.log(timeout)
+            const callNow = !timeout;
+            timeout = setTimeout(() => {
+                timeout = null;
+            }, wait)
+            if (callNow) func.apply(context, args)
+        }
+    }
+
+    // 截流函数 时间戳版
+    function throttle (func,wait) {
+        var previous = 0;
+        return function () {
+            let now = Date.now();
+            let context = this;
+            let args = arguments;
+            if (now - previous > wait) {
+                func.apply(context,args);
+                previous = now;
+            }
+        }
+    }
+
+    // 定时器版
+    function throttleTimeout (func,wait) {
+        let timeOut;
+        return function () {
+            let context = this;
+            let args = arguments;
+            if (!timeOut) {
+                timeOut = setTimeout(()=>{
+                    timeOut = null;
+                    func.apply(context,args);
+                },wait)
+            }
+        }
+    }
+    content.onmousemove = throttleTimeout(count,5000);
+  </script>
